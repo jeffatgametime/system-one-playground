@@ -1,0 +1,16 @@
+[project]
+name = "engine-openai"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["httpx==0.28.1", "labkit"]
+
+[tool.uv.sources]
+labkit = { path = "../../labkit", editable = true }
+
+[dependency-groups]
+dev = ["pytest>=9.1.1"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
+pythonpath = ["."]
+testpaths = ["tests"]

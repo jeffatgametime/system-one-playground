@@ -112,7 +112,7 @@ export function LoadPage({ handoff }: { handoff: WireRequest | null }) {
             {total} requests{total > 2000 ? " · the limit is 2,000" : ""}
           </span>
         </div>
-        {target?.remote && <div className="callout warn"><span className="icon">!</span><div>Load-testing Jev sends every request to TypeSafe and is billed; it also counts against your rate limit.</div></div>}
+        {target?.remote && <div className="callout warn"><span className="icon">!</span><div>Load-testing {target.label} sends every request to its hosted provider and is billed; it also counts against your rate limit.</div></div>}
       </div>
 
       {job.snapshot && <JobStatus job={job.snapshot} onCancel={job.cancel} label={label} />}

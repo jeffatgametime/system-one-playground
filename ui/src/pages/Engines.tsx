@@ -178,7 +178,7 @@ function EngineCard({ engine: e }: { engine: Engine }) {
         <div className="engine-arch">{e.architecture}</div>
         <div className="row wrap" style={{ gap: 6 }}>
           <span className="tag">{e.license}</span>
-          {e.remote && <span className="tag">remote · sends data to TypeSafe</span>}
+          {e.remote && <span className="tag">remote · sends data off this Mac</span>}
           <a className="small" href={e.source.startsWith("http") ? e.source : undefined} target="_blank" rel="noreferrer">
             {e.source.startsWith("http") ? "source ↗" : e.source}
           </a>
@@ -207,7 +207,7 @@ function EngineCard({ engine: e }: { engine: Engine }) {
 
       <div className="engine-live">
         {e.missing_secrets.length > 0 ? (
-          <JevSetup />
+          e.missing_secrets.includes("TYPESAFE_API_KEY") ? <JevSetup /> : <RemoteSetup engine={e} />
         ) : e.missing_weights.length > 0 ? (
           <div className="callout warn">
             <span className="icon">↓</span>
@@ -346,6 +346,19 @@ function EngineCard({ engine: e }: { engine: Engine }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function RemoteSetup({ engine }: { engine: Engine }) {
+  return (
+    <div className="callout">
+      <span className="icon">🔑</span>
+      <div className="small">
+        <strong>Needs API credentials</strong>
+        <div>Put {engine.missing_secrets.map((key) => <code key={key}>{key}=… </code>)} in <code>.env</code> at the lab root.</div>
+        <div className="muted">The lab picks it up without a restart. Only this engine receives these credentials. Starting a hosted engine runs a billable warm-up.</div>
+      </div>
     </div>
   );
 }

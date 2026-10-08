@@ -45,6 +45,17 @@ test("jev card explains how to get a key", async ({ page }) => {
   await expect(jev.getByRole("button", { name: "Start" })).toBeDisabled();
 });
 
+test("OpenAI card explains credentials and billable remote inference", async ({ page }) => {
+  await page.goto("/#/engines");
+  const openai = page.locator('[data-engine="openai"]');
+  await expect(openai).toContainText("OPENAI_API_KEY");
+  await expect(openai).toContainText("billable warm-up");
+  await expect(openai).toContainText("sends data off this Mac");
+  await expect(openai).not.toContainText("TypeSafe");
+  await expect(openai.getByRole("button", { name: "Start", exact: true })).toBeDisabled();
+  await openai.screenshot({ path: "test-results/openai-engine-setup.png" });
+});
+
 test("playground runs a request and shows answers", async ({ page }) => {
   await page.goto("/#/playground");
   await page.getByRole("button", { name: "Word-overlap baseline", exact: true }).click();

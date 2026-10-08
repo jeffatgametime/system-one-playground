@@ -1,4 +1,4 @@
-ENGINES := laya decider kev jev
+ENGINES := laya decider kev jev openai
 PY_PROJECTS := labkit gateway $(addprefix engines/,$(ENGINES))
 LAB := uv run --project gateway
 
@@ -45,6 +45,7 @@ test-fast: ## Python and UI unit tests plus typecheck
 	cd labkit && uv run pytest -q
 	cd gateway && uv run pytest -q
 	cd engines/jev && uv run pytest -q
+	cd engines/openai && uv run pytest -q
 	cd ui && npx tsc --noEmit -p . && npm test --silent
 
 test-engines: ## adapter tests against real weights (Laya on CPU, Decider on MPS)

@@ -3,14 +3,14 @@
 # System One Playground
 
 **Run the new wave of decision models side by side on your Mac:
-[Laya](https://huggingface.co/convaiinnovations/laya), [Decider](https://github.com/Mapika/decider), [Kev](https://github.com/jaredpalmer/kev), and TypeSafe's [Jev](https://docs.typesafe.ai).**
+[Laya](https://huggingface.co/convaiinnovations/laya), [Decider](https://github.com/Mapika/decider), [Kev](https://github.com/jaredpalmer/kev), TypeSafe's [Jev](https://docs.typesafe.ai), and [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions).**
 Structured input goes in and calibrated probabilities come out. You get honest numbers for accuracy, calibration, latency, CPU and memory.
 
 [![CI](https://github.com/goodboybeau/system-one-playground/actions/workflows/ci.yml/badge.svg)](https://github.com/goodboybeau/system-one-playground/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![macOS on Apple Silicon](https://img.shields.io/badge/macOS-Apple%20Silicon-black?logo=apple)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
-![Engines](https://img.shields.io/badge/engines-11-2a78d6)
+![Engines](https://img.shields.io/badge/engines-12-2a78d6)
 
 <img src="docs/assets/playground.png" alt="The Playground: one request, three engines, answers side by side" width="100%">
 
@@ -153,6 +153,7 @@ Background is in [docs/landscape.md](docs/landscape.md).
 | **Qwen3.5 4B · plain LLM** | A stock chat model read the same way: the control | 4.2B | MPS | 11–13 GB |
 | **Word-overlap baseline** | Counts shared words; the floor to beat | none | CPU | 40 MB |
 | **Jev 1.13** | TypeSafe's hosted model, via a proxy ([needs a key](docs/runbooks/jev.md)) | undisclosed | remote | none |
+| **GPT-6 Luna · OpenAI Decisions** | OpenAI's hosted decision model, via `/v1/decisions` ([needs a key](docs/runbooks/openai.md)) | undisclosed | remote | none |
 
 \*Physical footprint on an M1 Max, measured by the playground.
 
@@ -187,6 +188,7 @@ flowchart LR
   UI["Browser UI"] -- /api --> GW["gateway<br/>supervisor · sampler · jobs · SQLite"]
   GW -- "POST /v1/systemone" --> E1["Laya"] & E2["Decider"] & E3["Kev"]
   GW --> J["Jev proxy"] -- HTTPS --> TS[("TypeSafe")]
+  GW --> O["OpenAI proxy"] -- "HTTPS /v1/decisions" --> OA[("OpenAI")]
   subgraph sandbox["macOS sandbox · offline · no secrets"]
     E1
     E2
@@ -223,13 +225,13 @@ Details are in [docs/architecture.md](docs/architecture.md), and every metric is
 <details>
 <summary><b>Do I need a GPU, Docker, or an API key?</b></summary>
 
-No. Everything runs locally on the Apple GPU through MPS or MLX. Docker isn't used, because it can't reach the Apple GPU on macOS. An API key is only needed for the optional Jev engine.
+No. Local models run on the Apple GPU through MPS or MLX. Docker isn't used, because it can't reach the Apple GPU on macOS. API keys are only needed for the optional hosted Jev and OpenAI engines.
 </details>
 
 <details>
 <summary><b>Does anything leave my machine?</b></summary>
 
-Local engines run in a sandbox with outbound network denied, and the tests verify it. Model weights and datasets come from Hugging Face during setup. The Jev engine, if you enable it, sends requests to TypeSafe, and its card says so.
+Local engines run in a sandbox with outbound network denied, and the tests verify it. Model weights and datasets come from Hugging Face during setup. The Jev and OpenAI engines, if enabled, send requests to their hosted providers. Starting a hosted engine runs a billable warm-up; inference, repeat runs, benchmarks and load tests are billable too. [OpenAI setup and contract translation](docs/runbooks/openai.md).
 </details>
 
 <details>

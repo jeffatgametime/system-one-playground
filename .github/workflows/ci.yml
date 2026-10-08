@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   python:
-    name: Python · contract, gateway, Jev proxy
+    name: Python · contract, gateway, hosted proxies
     # The gateway reads macOS process accounting and sandboxes engines with sandbox-exec.
     runs-on: macos-15
     steps:
@@ -32,6 +32,9 @@ jobs:
         run: uv run --locked pytest -q
       - name: Jev proxy
         working-directory: engines/jev
+        run: uv run --locked pytest -q
+      - name: OpenAI Decisions proxy (offline)
+        working-directory: engines/openai
         run: uv run --locked pytest -q
       - name: Engine lockfiles are current
         run: for p in engines/laya engines/decider engines/kev; do (cd $p && uv lock --check) || exit 1; done

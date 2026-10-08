@@ -1,6 +1,6 @@
 # Every engine the lab can run. `project` is the directory whose .venv runs the engine.
 # Local engines run offline in a macOS sandbox with outbound network denied; `remote` engines
-# (Jev) are the exception and receive only the env vars listed in `secrets`.
+# are the exception and receive only the env vars listed in `secrets`.
 
 [[engine]]
 id = "laya-en"
@@ -157,3 +157,19 @@ weights = []
 remote = true
 secrets = ["TYPESAFE_API_KEY", "TYPESAFE_BASE_URL"]
 note = "Hosted reference. Sends data to TypeSafe; CPU/memory measure the local proxy only."
+
+[[engine]]
+id = "openai"
+label = "GPT-6 Luna · OpenAI Decisions"
+project = "engines/openai"
+loader = "engine_openai:load"
+model = "gpt-6-luna"
+devices = ["remote"]
+params = 0
+architecture = "hosted decision model (OpenAI Decisions API beta)"
+license = "proprietary"
+source = "https://developers.openai.com/api/docs/guides/decisions"
+weights = []
+remote = true
+secrets = ["OPENAI_API_KEY"]
+note = "Sends text to OpenAI. Startup warm-up and inference are billable; no retries. CPU/memory measure the proxy only. Refusals fail closed."

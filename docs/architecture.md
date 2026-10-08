@@ -14,6 +14,7 @@ flowchart LR
   G --> D
   G --> K
   G --> P
+  G --> O
 
   subgraph SB["macOS sandbox: no network, restricted writes, offline weights, no secrets"]
     L["engines/laya<br/>own .venv"]
@@ -22,6 +23,7 @@ flowchart LR
   end
 
   P["engines/jev<br/>proxy"] -- HTTPS --> T[(api.typesafe.ai)]
+  O["engines/openai<br/>proxy"] -- "HTTPS /v1/decisions" --> A[(api.openai.com)]
 ```
 
 ## One boundary
@@ -64,7 +66,7 @@ than Laya), wrapped in `sandbox-exec` with a generated profile:
 
 On top of the sandbox:
 - The environment is rebuilt from scratch: `PATH`, `HOME`, `HF_HUB_OFFLINE=1`, and nothing else from your shell.
-- Remote engines (Jev) skip the sandbox and receive only the variables their registry entry names in `secrets`.
+- Remote engines (Jev and OpenAI) skip the sandbox and receive only the variables their registry entry names in `secrets`. OpenAI's adapter translates the lab contract to the dedicated Decisions endpoint; labkit still validates and standardises its results. Hosted-engine warm-up and inference are billable.
 - Engines watch their parent and exit if the gateway disappears, even on `SIGKILL`.
 - On start, the gateway kills any engines a crashed predecessor left behind.
 
